@@ -5,29 +5,42 @@ whichHand = 'left';
 whichFinger ='index';
 minSet = 1;
 maxSet = 11;
-targetFactor = 10;
+
 
 indexFigner = tactileData(whichHand, whichFinger);
+%%
 indexFigner.loadDataFrom(expDir, minSet:maxSet);
+
+%% Tain
 indexFigner.updateForceEstimatorGP(1);
 
-
-indexFigner.updateForceEstimate(2);
-
-
-indexFigner.updateForceEstimatorGP(2);
-
-indexFigner.updateForceEstimate(3);
-indexFigner.updateForceEstimatorGP(3);
-
-indexFigner.updateForceEstimate(4);
-indexFigner.updateForceEstimatorGP(4);
-
-%%
-for i = 2:4
-[meanForce, forceVar] = indexFigner.estimateForce(i);
-indexFigner.plotForceEstimate(meanForce, i, 1);
-pause;
+for i = minSet+1:maxSet
+    indexFigner.updateForceEstimate(i);
+    indexFigner.updateForceEstimatorGP(i);
+    
 end
 
+%% Tain recursive
 
+
+for i = minSet:maxSet
+    indexFigner.updateForceEstimatorGP(i);
+end
+
+%%
+
+indexFigner.loadIteration(7);
+for i = minSet:maxSet
+    [meanForce, forceVar] = indexFigner.estimateForce(i);
+    indexFigner.plotForceEstimate(meanForce, forceVar, i, 1);
+    pause;
+end
+
+%%
+
+for i = minSet+1:6
+    indexFigner.loadIteration(i - 1); % load the model from previous iteration
+    indexFigner.updateForceEstimate(i);
+    indexFigner.plotTrainingData(i, 1);
+    pause;
+end

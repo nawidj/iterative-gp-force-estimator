@@ -10,8 +10,8 @@ classdef tactileData < handle
         epochs = 100;
         nholdouts = 2;
         targetScale = 10;
-        downSampleRate = 10;
-        tolerance = 0.05;
+        downSampleRate = 25;
+        tolerance = 0.5;
     end
     
     methods (Access = public)
@@ -28,24 +28,30 @@ classdef tactileData < handle
             forceEstimate{nSets} = newForceEstimate;
         end
         
-        figNum = plotData(this, nSet, figNum);
         
-        loadDataFrom(this, expDir, setList);
-        plotForceEstimate(this, forceEstimate, nSet, figNum);
-        
-        updateForceEstimatorGP(this, maxSet);
-        [meanForce, forceVar] = estimateForce(this, setNum);
         
         function updateForceEstimate(this, setNum)
             [this.forceEstimate{setNum}, ~] = estimateForce(this, setNum);
         end
         
-
+        function loadIteration(this, itNum)
+            load(sprintf('iteration_%02d.mat', itNum));
+            this.gpModel = opt;
+        end
+        
+        figNum = plotData(this, nSet, figNum);
+        plotTrainingData(this, nSet, figNum);
+        
+        loadDataFrom(this, expDir, setList);
+        plotForceEstimate(this, forceEstimate, variance, nSet, figNum);
+        
+        updateForceEstimatorGP(this, maxSet);
+        updateForceEstimatorGPRec(this, maxSet);
+        [meanForce, forceVar] = estimateForce(this, setNum);
     end
     
     methods (Access = protected)
-        [attributes, trarget] = getTrainingSet(this, maxSet, tolerence, targetScale, downSampleRate)
-
-        
+        [attributes, target] = getTrainingSet(this, maxSet)
+        [attributes, target] = getTrainingSetRecursive(this, maxSet);
     end
 end

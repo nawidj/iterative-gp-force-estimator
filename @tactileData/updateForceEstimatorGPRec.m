@@ -1,4 +1,4 @@
-function updateForceEstimatorGP(this, maxSet)
+function updateForceEstimatorGPRec(this, maxSet)
 
 name = sprintf('iteration_%02d', maxSet);
 this.gpModel = getGPModel(this, name);
@@ -6,7 +6,7 @@ jobID = 1;
 
 
 % Get the training data
-[input, target] = this.getTrainingSet(maxSet);
+[input, target] = this.getTrainingSetRec(maxSet);
 gurls(input, target, this.gpModel, jobID);
 
 

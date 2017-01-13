@@ -1,4 +1,4 @@
-function [attributes, target] = getTrainingSet(this, maxSet)
+function [attributes, target] = getTrainingSetRecursive(this, maxSet)
 
 
 
@@ -8,9 +8,14 @@ if(maxSet == 1)
     target = downsample(this.ft{1}(:,3) * this.targetScale, this.downSampleRate);
 else
    % Estimate the number of data
-   dataLength = length(downsample(this.forceEstimate{1}, this.downSampleRate));
-   for dataset = 2:maxSet
-       
+   % The 
+   dataLength = 0;%length(downsample(this.forceEstimate{1}), this.downSampleRate);
+   
+   % load the latest model
+   this.loadIteration(maxSet-1);
+   
+   for dataset = 1:maxSet
+       this.updateForceEstimate(dataset)
        dataLength = dataLength + length(downsample(this.forceEstimate{dataset}(abs(this.forceEstimate{dataset}(:,1) - this.ft{dataset}(:,3)) > this.tolerance), this.downSampleRate));
    end
    
@@ -30,7 +35,6 @@ else
       attributes(startIndex : (length(newAtt) + startIndex -1), :) = newAtt;
       target(startIndex:(length(newAtt) + startIndex - 1), :) = newFt * this.targetScale ;
       startIndex = startIndex + length(newAtt);
-      
    end
     
 end
