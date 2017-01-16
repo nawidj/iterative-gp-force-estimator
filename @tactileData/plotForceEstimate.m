@@ -28,7 +28,7 @@ set(gca, 'fontsize', 25)
 hold on;
 patch([x fliplr(x)],[transpose(forceEstimate + variance), fliplr( transpose(forceEstimate - variance))], 'red', 'FaceAlpha', 0.15, 'LineStyle', 'none');
 hold off;
-legend('Ground truth', 'Froce estimate');
+legend('Ground truth', 'Force estimate');
 axis tight;
 
 hold on
