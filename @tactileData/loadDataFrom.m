@@ -1,7 +1,7 @@
 function loadDataFrom(this, expDir, setList)
 
 
-this.nSets = 0;
+%this.nSets = 0;
 clear this.tactile this.ft this.forceEstimate;
 
 for whichSet = setList
